@@ -1,0 +1,20 @@
+---
+- name: Receptor Traceroute to exec nodes
+  hosts: all
+  gather_facts: false
+  become: true
+
+  vars:
+    receptor_target: mesh-exec1
+
+  tasks:
+  - name: Show path to mesh node
+    ansible.builtin.shell: >
+      receptorctl --socket /var/run/awx-receptor/receptor.sock traceroute "{{ receptor_target }}"
+    register: receptor_traceroute
+  
+  - name: Print receptor path to mesh node
+    ansible.builtin.debug:
+      msg: > 
+        Mesh path:
+        "{{ receptor_traceroute | to_yaml }}"
