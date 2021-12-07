@@ -115,20 +115,11 @@
       tags:
         - setup-env
     
-
     - name: create auth token fact
       ansible.builtin.set_fact:
         auth_token: "{{ _auth_token.ansible_facts.controller_token }}"
       tags:
         - setup-env
-
-    # - name: debug auth token
-    #   debug:
-    #     var: auth_token
-    #   tags:
-    #     - setup-env
-
-
 
     - name: Add lab inventories
       awx.awx.inventory:
@@ -141,14 +132,14 @@
         validate_certs: false
       loop: "{{ lab_inventories }}"
       tags:
-        - setup-inv
+        - setup-env
 
     - name: host debug
       debug:
         var: item
       loop: "{{ lab_hosts  }}"
       tags:
-        - setup-inv
+        - setup-env
   
     - name: Create hosts
       awx.awx.host:
@@ -160,15 +151,19 @@
         variables:  "{{ item.lab_host_vars }}"
       loop: "{{ lab_hosts }}"
       tags:
-        - setup-hosts
+        - setup-env
 
-    - name: Add hosts to {{ lab_inv_group_name }}
-      awx.awx.group:
-        name: "{{ lab_inv_group_name }}"
-        inventory: "{{ lab_inventory_name }}"
-        hosts: "{{ lab_hosts }}"
-        controller_config_file: "{{ playbook_dir }}/../controller.cfg"
-        
+    - name: Add the lab ssh credential
+      awx.awx.credential:
+        name: "{{ lab_credential_name }}"
+        organization: "Default"
+        credential_type: Machine
+        inputs:
+          ssh_key_data: "{{ lookup('file', '/home/rhel/.ssh/id_rsa') }}"
+        controller_oauthtoken: "{{ auth_token }}"
+        validate_certs: false
+      tags:
+        - setup-env
   #     tags:  
     # - name: add lab inventory sources
     #   awx.awx_inventory_source:
