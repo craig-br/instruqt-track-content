@@ -11,30 +11,27 @@
     username: admin
     admin_password: ansible123!
     lab_credential_name: "Lab Machine Credential"
-    lab_jt_name: "Debug-Info"
+    lab_jt_name: "Debug Info"
+    lab_project_name: "Lab Project"
     lab_inventories:
-      - name: "Raleigh"
+      - name: "Raleigh DC"
         description: "Raileigh data center. United States"
         # inventory_source_name: "Raleigh inventory source"
-      - name: "Jhb"
+      - name: "Johannesburg DC"
         description: "Johannesburg data center. South Africa"
         # inventory_source_name: "Jhb inventory source"
     lab_hosts:
       - lab_host_name: "1.johannesburg.example.com"
-        lab_host_inventory: "Jhb"
+        lab_host_inventory: "Johannesburg DC"
         lab_host_vars:
           ansible_host: mesh-exec1 
           ansible_python_interpreter: /usr/bin/python3
       - lab_host_name: "1.raleigh.example.com"
-        lab_host_inventory: "Raleigh"
+        lab_host_inventory: "Raleigh DC"
         lab_host_vars:
-          ansible_host: localhost
-          ansible_connection: local 
+          ansible_host: automation-controller21
           ansible_python_interpreter: /usr/bin/python3
     lab_organization: "Default"
-    # lab_hosts:
-    #   - host01
-    #   - host02
     lab_inv_group_name: "web"
     custom_facts_dir: "/etc/ansible/facts.d"
     custom_facts_file: custom_facts.fact
@@ -164,6 +161,54 @@
         validate_certs: false
       tags:
         - setup-env
+
+    - name: Add the lab project
+      awx.awx.project:
+        name: "{{ lab_project_name }}"
+        scm_type: git
+        scm_url: "https://github.com/craig-br/instruqt-track-content/"
+        organization: "Default"
+        scm_update_on_launch: false
+        scm_update_cache_timeout: 60
+        scm_branch: "devel"
+        controller_oauthtoken: "{{ auth_token }}"
+        validate_certs: false
+      tags:
+        - setup-env
+
+    - name: Create the Debug Info job template
+      awx.awx.job_template:
+        name: "Debug Info"
+        state: present
+        become_enabled: true
+        project: "{{ lab_project_name }}"
+        credential: "{{ lab_credential_name }}"
+        inventory: "Raleigh DC"
+        playbook: "setup-scripts/getting-started-mesh/playbooks/debug_info.yml"
+        ask_inventory_on_launch: true
+        controller_oauthtoken: "{{ auth_token }}"
+        validate_certs: false
+      tags:
+        - setup-env
+        - lab-jt
+
+    - name: Create the Receptor traceroute job template
+      awx.awx.job_template:
+        name: "Mesh traceroute"
+        state: present
+        become_enabled: true
+        project: "{{ lab_project_name }}"
+        credential: "{{ lab_credential_name }}"
+        inventory: "Raleigh DC"
+        playbook: "setup-scripts/getting-started-mesh/playbooks/mesh_traceroute.yml"
+        extra_vars:
+          receptor_target: "mesh-exec1"
+        controller_oauthtoken: "{{ auth_token }}"
+        validate_certs: false
+      tags:
+        - setup-env
+        - lab-jt
+
   #     tags:  
     # - name: add lab inventory sources
     #   awx.awx_inventory_source:
