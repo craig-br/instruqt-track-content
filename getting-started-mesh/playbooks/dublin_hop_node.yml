@@ -4,7 +4,7 @@
   gather_facts: false
 
   tasks:
-  - name: start mesh service on hop node
+  - name: Start mesh service on hop node
     service:
       name: receptor
       state: started
@@ -20,7 +20,3 @@
   - name: Print mesh node status
     ansible.builtin.debug:
       var: hop_status.stdout_lines[:13]
-
-  - name: debug mesh
-    debug:
-      var: hop_status
