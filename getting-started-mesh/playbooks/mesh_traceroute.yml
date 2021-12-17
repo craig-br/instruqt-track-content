@@ -16,10 +16,10 @@
     ansible.builtin.command: "receptorctl --socket /var/run/awx-receptor/receptor.sock traceroute {{ mesh_target }}"
     register: mesh_traceroute
   
-  - name: Print meshnode status
+  - name: Print mesh node status
     ansible.builtin.debug:
       var: mesh_status.stdout_lines[:5]
 
-  - name: Print mesh path to mesh node
+  - name: Print path to mesh node
     ansible.builtin.debug:
       var: mesh_traceroute.stdout_lines
