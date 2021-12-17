@@ -4,10 +4,10 @@
   gather_facts: false
 
   tasks:
-  # - name: start mesh service on hop node
-  #   service:
-  #     name: receptor
-  #     state: started
+  - name: start mesh service on hop node
+    service:
+      name: receptor
+      state: started
 
   - name: Get hop node status
     command: >
