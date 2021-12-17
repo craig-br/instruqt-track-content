@@ -1,0 +1,20 @@
+---
+- name: Setup Dublin hop node
+  hosts: all
+  gather_facts: false
+  become: true
+
+  tasks:
+  - name: start mesh service on hop node
+    service:
+      name: receptor
+      state: started
+   
+  - name: Get hop node status
+    command: >
+      receptorctl --socket /var/run/awx-receptor/receptor.sock status
+    register: hop_status
+
+  - name: Print mesh node status
+    ansible.builtin.debug:
+      var: hop_status.stdout_lines[:13]
