@@ -2,19 +2,25 @@
 - name: Setup Dublin hop node
   hosts: all
   gather_facts: false
-  become: true
 
   tasks:
-  - name: Configure Dublin mesh hop node
-    service:
-      name: receptor
-      state: started
-   
-  - name: Get Dublin hop node status
+  # - name: start mesh service on hop node
+  #   service:
+  #     name: receptor
+  #     state: started
+
+  - name: Get hop node status
     command: >
       receptorctl --socket /var/run/awx-receptor/receptor.sock status
     register: hop_status
+    until: hop_status.stdout.find('automation-controller21') != -1
+    delay: 5
+    retries: 7
 
-  - name: Print Dublin hop node status
+  - name: Print mesh node status
     ansible.builtin.debug:
       var: hop_status.stdout_lines[:13]
+
+  - name: debug mesh
+    debug:
+      var: hop_status
