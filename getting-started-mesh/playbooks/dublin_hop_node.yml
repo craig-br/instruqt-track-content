@@ -15,7 +15,7 @@
     register: hop_status
     until: hop_status.stdout.find('automation-controller21') != -1
     delay: 5
-    retries: 7
+    retries: 15
 
   - name: Print mesh node status
     ansible.builtin.debug:
