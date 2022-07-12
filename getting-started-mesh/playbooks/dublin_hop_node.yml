@@ -5,15 +5,16 @@
 
   tasks:
   - name: Configure mesh on hop node
-    service:
+    ansible.builtin.service:
       name: receptor
       state: started
 
   - name: Get hop node status
-    command: >
+    ansible.builtin.command: >
       receptorctl --socket /var/run/awx-receptor/receptor.sock status
     register: hop_status
-    until: hop_status.stdout.find('automation-controller21') != -1
+    changed_when: false
+    until: hop_status.stdout.find('mesh-automation-controller') != -1
     delay: 5
     retries: 15
 
