@@ -29,4 +29,10 @@
 
     - name: Print errors to mesh node
       ansible.builtin.debug:
-        var: mesh_traceroute.stderr_lines | default("No errors found.")
+        msg: "Mesh traceroute errors: {{ mesh_traceroute.stderr_lines | default('No errors found.') }}"
+
+    - name: Check that {{ mesh_target }} is reachable
+      ansible.builtin.assert:
+        that:
+          - mesh_traceroute is search("ERROR")
+        fail_msg: "{{ mesh_target }} node is unreachable."
