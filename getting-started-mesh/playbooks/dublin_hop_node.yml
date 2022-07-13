@@ -14,7 +14,7 @@
       receptorctl --socket /var/run/awx-receptor/receptor.sock status
     register: hop_status
     changed_when: false
-    until: hop_status.rc = 1
+    until: hop_status.rc != 1
     delay: 5
     retries: 15
 
