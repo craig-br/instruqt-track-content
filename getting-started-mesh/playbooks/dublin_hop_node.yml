@@ -21,4 +21,3 @@
   - name: Print mesh node status
     ansible.builtin.debug:
       var: hop_status.stdout_lines[:13]
-
