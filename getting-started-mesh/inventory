@@ -1,6 +1,6 @@
 # Instruqt Getting started with automation mesh inventory
 [automationcontroller]
-automation-controller21 ansible_connection=local
+mesh-automation-controller
 
 [execution_nodes]
 mesh-exec1
