@@ -16,7 +16,7 @@
       changed_when: false
       register: mesh_traceroute
 
-    - name: Print i{{ mesh_target }} mesh node status
+    - name: Print {{ mesh_target }} mesh node status
       ansible.builtin.debug:
         var: mesh_status.stdout_lines[:5]
 
