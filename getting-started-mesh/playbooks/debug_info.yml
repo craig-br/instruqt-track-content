@@ -1,12 +1,12 @@
 ---
-- name: gather debug info
+- name: Gether system information
   hosts: all
   become: true
   gather_facts: false
 
   tasks:
     - name: Gather recent vmstat info
-      ansible.builtin.command: /bin/vmstat 1 5
+      ansible.builtin.command: vmstat 1 5
       register: vmstat
       changed_when: false
 
