@@ -1,5 +1,5 @@
 ---
-- name: Gether system information
+- name: Gather system information
   hosts: all
   become: true
   gather_facts: false
