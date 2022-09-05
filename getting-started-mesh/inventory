@@ -1,7 +1,7 @@
 # Instruqt Getting started with automation mesh inventory
 [automationcontroller]
-mesh-automation-controller
+raleigh-controller
 
 [execution_nodes]
-mesh-exec1
-mesh-hop1
+jhb-exec
+dublin-hop
