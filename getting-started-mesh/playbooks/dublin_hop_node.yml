@@ -4,20 +4,29 @@
   gather_facts: false
 
   tasks:
-  - name: Configure mesh on hop node
-    service:
+  - name: Enable mesh on hop node
+    ansible.builtin.service:
       name: receptor
       state: started
 
   - name: Get hop node status
-    command: >
+    ansible.builtin.command: >
       receptorctl --socket /var/run/awx-receptor/receptor.sock status
     register: hop_status
-    until: hop_status.stdout.find('automation-controller21') != -1
+    changed_when: false
+    until: hop_status.rc == 0
     delay: 5
     retries: 15
 
-  - name: Print mesh node status
+  - name: Receptor - refresh {{ mesh_target }}
+    ansible.builtin.command: >
+      receptorctl --socket /var/run/awx-receptor/receptor.sock ping {{ mesh_target }}
+    register: exec_status
+    changed_when: false
+    until: exec_status.rc == 0
+    delay: 5
+    retries: 15
+
+  - name: Print {{ mesh_target }} node status
     ansible.builtin.debug:
       var: hop_status.stdout_lines[:13]
-

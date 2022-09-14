@@ -4,22 +4,28 @@
   gather_facts: false
   become: true
 
-  vars:
-    mesh_target: mesh-exec1
-
   tasks:
-  - name: Show mesh status
-    ansible.builtin.command: "receptorctl --socket /var/run/awx-receptor/receptor.sock status"
-    register: mesh_status
-    delegate_to: "{{ mesh_target }}"
-  - name: Show path to mesh node
-    ansible.builtin.command: "receptorctl --socket /var/run/awx-receptor/receptor.sock traceroute {{ mesh_target }}"
-    register: mesh_traceroute
-  
-  - name: Print mesh node status
-    ansible.builtin.debug:
-      var: mesh_status.stdout_lines[:5]
+    - name: Show mesh status
+      ansible.builtin.command: "receptorctl --socket /var/run/awx-receptor/receptor.sock status"
+      changed_when: false
+      register: mesh_status
+      delegate_to: "{{ mesh_target }}"
 
-  - name: Print path to mesh node
-    ansible.builtin.debug:
-      var: mesh_traceroute.stdout_lines
+    - name: Show path to {{ mesh_target }} mesh node
+      ansible.builtin.command: "receptorctl --socket /var/run/awx-receptor/receptor.sock traceroute {{ mesh_target }}"
+      changed_when: false
+      register: mesh_traceroute
+
+    - name: Print mesh node status
+      ansible.builtin.debug:
+        var: mesh_status.stdout_lines[:5]
+
+    - name: Print path to {{ mesh_target }} mesh node
+      ansible.builtin.debug:
+        var: mesh_traceroute.stdout_lines
+
+    - name: Check that {{ mesh_target }} is reachable
+      ansible.builtin.assert:
+        that:
+          - mesh_traceroute is not search("ERROR")
+        fail_msg: "{{ mesh_target }} node is unreachable. {{ mesh_traceroute.stderr }}"
