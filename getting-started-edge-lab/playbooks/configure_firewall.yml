@@ -1,0 +1,15 @@
+---
+- name: Configure Cockpit monitoring application
+  hosts: all
+  become: true
+  gather_facts: false
+  vars:
+    firewall:
+      - service: cockpit
+        state: enabled
+
+  tasks:
+    - name: Import firewall role
+      ansible.builtin.import_role:
+        name: linux-system-roles.firewall
+

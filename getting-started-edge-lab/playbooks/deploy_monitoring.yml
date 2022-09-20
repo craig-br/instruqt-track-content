@@ -1,0 +1,24 @@
+---
+- name: Configure Cockpit monitoring application
+  hosts: all
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Install monitoring software
+      ansible.builtin.package:
+        name:
+          - cockpit
+        state: present
+
+    - name: Configure monitoring software
+      ansible.builtin.template:
+        src: cockpit.conf.j2
+        dest: /etc/cockpit/cockpit.conf
+        mode: 0644
+
+    - name: Start Cockpit
+      ansible.builtin.service:
+        name: cockpit.socket
+        enabled: true
+        state: started
