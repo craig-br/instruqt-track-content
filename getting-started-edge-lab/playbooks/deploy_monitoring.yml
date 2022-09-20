@@ -6,9 +6,10 @@
 
   tasks:
     - name: Install monitoring software
-      ansible.builtin.package:
+      ansible.builtin.dnf:
         name:
           - cockpit
+        cacheonly: true
         state: present
 
     - name: Configure monitoring software
