@@ -9,7 +9,6 @@
       ansible.builtin.dnf:
         name:
           - cockpit
-        cacheonly: true
         state: present
 
     - name: Configure monitoring software
