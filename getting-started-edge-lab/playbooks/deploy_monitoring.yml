@@ -17,7 +17,7 @@
         dest: /etc/cockpit/cockpit.conf
         mode: 0644
 
-    - name: Start Cockpit
+    - name: Start monitoring software
       ansible.builtin.service:
         name: cockpit.socket
         enabled: true
