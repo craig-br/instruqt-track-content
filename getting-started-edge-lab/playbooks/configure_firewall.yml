@@ -1,15 +1,14 @@
 ---
-- name: Configure Cockpit monitoring application
+- name: Configure firewall for monitoring
   hosts: all
   become: true
   gather_facts: false
-  vars:
-    firewall:
-      - service: cockpit
-        state: enabled
 
   tasks:
-    - name: Import firewall role
-      ansible.builtin.import_role:
-        name: fedora.linux_system_roles.firewall
+    - name: Configure firewall for monitoring
+      ansible.posix.firewalld:
+        permanent: true
+        service: cockpit
+        immediate: true
+        state: enabled
 

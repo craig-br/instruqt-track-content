@@ -1,5 +1,5 @@
 ---
-- name: Configure Cockpit monitoring application
+- name: Configure edge monitoring application
   hosts: all
   become: true
   gather_facts: false
