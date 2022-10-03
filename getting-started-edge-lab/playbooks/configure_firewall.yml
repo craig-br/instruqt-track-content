@@ -1,0 +1,14 @@
+---
+- name: Configure firewall for monitoring
+  hosts: all
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Configure firewall for monitoring
+      ansible.posix.firewalld:
+        permanent: true
+        service: cockpit
+        immediate: true
+        state: enabled
+

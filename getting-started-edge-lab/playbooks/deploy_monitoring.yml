@@ -1,0 +1,24 @@
+---
+- name: Configure edge monitoring application
+  hosts: all
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Install monitoring software
+      ansible.builtin.dnf:
+        name: cockpit
+        cacheonly: true
+        state: present
+
+    - name: Configure monitoring software
+      ansible.builtin.template:
+        src: cockpit.conf.j2
+        dest: /etc/cockpit/cockpit.conf
+        mode: 0644
+
+    - name: Start monitoring software
+      ansible.builtin.service:
+        name: cockpit.socket
+        enabled: true
+        state: started
