@@ -10,7 +10,7 @@
         extra_vars: "{{ item.extra_vars | default(omit) }}"
         ask_variables_on_launch: "{{ item.ask_variables_on_launch | default(false) }}"
         organization: "{{ item.organization | default(omit) }}"
-        schema: "{{ item['related']['workflow_nodes'] }}"
+        # schema: "{{ item['related']['workflow_nodes'] }}"
         controller_username: "{{ controller_username }}"
         controller_password: "{{ controller_password }}"
         controller_host: "{{ controller_hostname }}"
