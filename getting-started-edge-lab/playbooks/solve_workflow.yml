@@ -1,0 +1,19 @@
+- name: Solve edge workflow challenge
+  hosts: automationcontroller
+  gather_facts: false
+
+  tasks:
+    - name: Solve - Create workflow job templates
+      awx.awx.workflow_job_template:
+        name: "{{ item.name }}"
+        inventory: "{{ item.inventory | default(omit) }}"
+        extra_vars: "{{ item.extra_vars | default(omit) }}"
+        ask_variables_on_launch: "{{ item.ask_variables_on_launch | default(false) }}"
+        organization: "{{ item.organization | default(omit) }}"
+        schema: "{{ item['related']['workflow_nodes'] }}"
+        controller_username: "{{ controller_username }}"
+        controller_password: "{{ controller_password }}"
+        controller_host: "{{ controller_hostname }}"
+        validate_certs: "{{ controller_validate_certs }}"
+      loop: "{{ controller_workflows }}"
+      when: (controller_workflows is defined) and (lab_workflow_name == item["name"])
