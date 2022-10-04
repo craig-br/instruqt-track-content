@@ -6,9 +6,23 @@
 
   tasks:
     - name: Configure firewall for monitoring
-      ansible.posix.firewalld:
-        permanent: true
-        service: cockpit
-        immediate: true
-        state: enabled
+      vars:
+        firewall:
+          - set_default_zone: internal
+            state: enabled
+            permanent: true
+          - service: cockpit
+            state: disabled
+            permanent: true
+            zone: internal
+          - port: 27199/tcp
+            state: enabled
+            permanent: true
+            zone: internal
+          - port: 8088/tcp
+            state: enabled
+            permanent: true
+            zone: internal
+      ansible.builtin.import_role:
+        name: fedora.linux_system_roles.firewall
 
