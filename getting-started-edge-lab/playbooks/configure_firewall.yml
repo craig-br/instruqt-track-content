@@ -12,7 +12,7 @@
             state: enabled
             permanent: true
           - service: cockpit
-            state: disabled
+            state: enabled
             permanent: true
             zone: internal
           - port: 27199/tcp
