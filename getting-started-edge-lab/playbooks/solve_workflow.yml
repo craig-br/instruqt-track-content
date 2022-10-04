@@ -28,8 +28,21 @@
         organization: "{{ item.organization }}"
         inventory: "{{ item.inventory }}"
         unified_job_template: "{{ item.unified_job_template }}"
-        success_nodes: "{{ item.success_nodes | default(omit) }}"
         workflow_job_template: "{{ item.workflow_job_template }}"
+        <<: *controller_login
+      loop: "{{ controller_workflow_nodes }}"
+      when: (controller_workflow_nodes is defined)
+
+    - name: Solve - Create workflow job template node schema
+      awx.awx.workflow_job_template_node:
+        identifier: "{{ item.identifier }}"
+        organization: "{{ item.organization }}"
+        inventory: "{{ item.inventory }}"
+        unified_job_template: "{{ item.unified_job_template }}"
+        workflow_job_template: "{{ item.workflow_job_template }}"
+        success_nodes:  "{{ item.success_nodes | default(omit) }}"
+        always_nodes: "{{ item.always_nodes | default(omit) }}"
+        failure_nodes: "{{ item.failure_nodes | default(omit) }}"
         <<: *controller_login
       loop: "{{ controller_workflow_nodes }}"
       when: (controller_workflow_nodes is defined)
