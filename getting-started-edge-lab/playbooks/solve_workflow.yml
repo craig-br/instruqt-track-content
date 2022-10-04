@@ -2,18 +2,34 @@
   hosts: automationcontroller
   gather_facts: false
 
+  vars:
+    controller_login: &controller_login
+      controller_username: "{{ controller_username }}"
+      controller_password: "{{ controller_password }}"
+      controller_host: "{{ controller_hostname }}"
+      validate_certs: "{{ controller_validate_certs }}"
+
   tasks:
-    - name: Solve - Create workflow job templates
+    - name: Solve - Create workflow job template
       awx.awx.workflow_job_template:
         name: "{{ item.name }}"
         inventory: "{{ item.inventory | default(omit) }}"
         extra_vars: "{{ item.extra_vars | default(omit) }}"
         ask_variables_on_launch: "{{ item.ask_variables_on_launch | default(false) }}"
         organization: "{{ item.organization | default(omit) }}"
-        schema: "{{ item['related']['workflow_nodes'] }}"
-        controller_username: "{{ controller_username }}"
-        controller_password: "{{ controller_password }}"
-        controller_host: "{{ controller_hostname }}"
-        validate_certs: "{{ controller_validate_certs }}"
+        <<: *controller_login
+        destroy_current_schema: true
       loop: "{{ controller_workflows }}"
-      when: (controller_workflows is defined) and (lab_workflow_name == item["name"])
+      when: (controller_workflows is defined)
+
+    - name: Solve - Create workflow job template nodes
+      awx.awx.workflow_job_template_node:
+        identifier: "{{ item.identifier }}"
+        organization: "{{ item.organization }}"
+        inventory: "{{ item.inventory }}"
+        unified_job_template: "{{ item.unified_job_template }}"
+        success_nodes: "{{ item.success_nodes | default(omit) }}"
+        workflow_job_template: "{{ item.workflow_job_template }}"
+        <<: *controller_login
+      loop: "{{ controller_workflow_nodes }}"
+      when: (controller_workflow_nodes is defined)
