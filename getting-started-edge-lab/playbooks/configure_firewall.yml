@@ -24,7 +24,12 @@
             permanent: true
             zone: internal
       ansible.builtin.import_role:
-        name: fedora.linux_system_roles.firewall
+        name: linux-system-roles.firewall
+    
+    - name: Reload edge application
+      ansible.builtin.service:
+        name: afiot-inductive-automation-ignition
+        state: restarted
 
     
 
