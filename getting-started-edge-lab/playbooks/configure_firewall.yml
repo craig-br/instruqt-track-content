@@ -26,10 +26,10 @@
       ansible.builtin.import_role:
         name: linux-system-roles.firewall
     
-    - name: Reload edge application
-      ansible.builtin.service:
-        name: afiot-inductive-automation-ignition
-        state: restarted
+    # - name: Reload edge application
+    #   ansible.builtin.service:
+    #     name: afiot-inductive-automation-ignition
+    #     state: restarted
 
     
 
