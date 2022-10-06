@@ -4,32 +4,35 @@
   become: true
   gather_facts: false
 
+  vars:
+    firewall:
+      - set_default_zone: internal
+        state: enabled
+        permanent: true
+      - service: cockpit
+        state: enabled
+        permanent: true
+        zone: internal
+      - port: 27199/tcp
+        state: enabled
+        permanent: true
+      - port: 8088/tcp
+        state: enabled
+        permanent: true
+        zone: internal
+    service_name: "inductive-automation-ignition"
+    container_image: "docker.io/inductiveautomation/ignition"
+    container_tag: "8.1"
+
   tasks:
     - name: Configure firewall for monitoring
-      vars:
-        firewall:
-          - set_default_zone: internal
-            state: enabled
-            permanent: true
-          - service: cockpit
-            state: enabled
-            permanent: true
-            zone: internal
-          - port: 27199/tcp
-            state: enabled
-            permanent: true
-            zone: internal
-          - port: 8088/tcp
-            state: enabled
-            permanent: true
-            zone: internal
       ansible.builtin.import_role:
         name: linux-system-roles.firewall
-    
-    # - name: Reload edge application
-    #   ansible.builtin.service:
-    #     name: afiot-inductive-automation-ignition
-    #     state: restarted
 
-    
-
+    - name: Reload container network
+      ansible.builtin.command: >
+        podman network reload afiot-"{{ service_name }}"
+      when: 
+        - __afiot_container_info['containers']
+        - __afiot_container_info['containers'][0]['Name'] == "afiot-" + service_name
+        - __afiot_container_info['containers'][0]['ImageName'] == container_image + ":" + container_tag
