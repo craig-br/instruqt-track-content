@@ -29,6 +29,11 @@
       ansible.builtin.import_role:
         name: linux-system-roles.firewall
 
+    - name: Gather information about the current running container
+      containers.podman.podman_container_info:
+        name: "afiot-{{ service_name }}"
+      register: __afiot_container_info
+
     - name: Reload container network
       ansible.builtin.command: >
         podman network reload afiot-"{{ service_name }}"
