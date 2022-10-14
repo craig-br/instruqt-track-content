@@ -4,6 +4,11 @@
   become: true
   gather_facts: false
 
+  vars:
+    service_name: "inductive-automation-ignition"
+    container_image: "docker.io/inductiveautomation/ignition"
+    container_tag: "8.1"
+
   tasks:
     - name: Install monitoring software
       ansible.builtin.dnf:
@@ -22,3 +27,16 @@
         name: cockpit.socket
         enabled: true
         state: started
+
+    - name: Gather information about the current running container
+      containers.podman.podman_container_info:
+        name: "afiot-{{ service_name }}"
+      register: __afiot_container_info
+
+    - name: Reload container network
+      ansible.builtin.command: >
+        podman network reload afiot-"{{ service_name }}"
+      when: 
+        - __afiot_container_info['containers']
+        - __afiot_container_info['containers'][0]['Name'] == "afiot-" + service_name
+        - __afiot_container_info['containers'][0]['ImageName'] == container_image + ":" + container_tag
