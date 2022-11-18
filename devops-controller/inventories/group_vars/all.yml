@@ -1,0 +1,9 @@
+---
+repo_url: http://gitea:3000
+student_user: "student"
+student_email: "student@localhost"
+student_password: "learn_ansible"
+jenkins_job: "ACMECorp"
+ciserver_url: http://jenkins:8080
+repo_user: rhel
+git_repo: http://gitea:3000/{{ student_user }}/acme_corp.git
